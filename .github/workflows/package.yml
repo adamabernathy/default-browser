@@ -1,0 +1,92 @@
+name: Package macOS App
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          swift --version
+
+      - name: Run tests
+        run: swift test
+
+      - name: Build release binary
+        run: swift build -c release
+
+      - name: Create .app bundle
+        run: |
+          APP_NAME="Browser Switch"
+          PRODUCT_NAME="BrowserSwitchMenuBarApp"
+          APP_DIR="dist/${APP_NAME}.app"
+          EXECUTABLE_PATH="${APP_DIR}/Contents/MacOS/${APP_NAME}"
+
+          mkdir -p "${APP_DIR}/Contents/MacOS"
+          mkdir -p "${APP_DIR}/Contents/Resources"
+
+          cp ".build/release/${PRODUCT_NAME}" "${EXECUTABLE_PATH}"
+          chmod +x "${EXECUTABLE_PATH}"
+
+          cat > "${APP_DIR}/Contents/Info.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CFBundleDevelopmentRegion</key>
+            <string>en</string>
+            <key>CFBundleExecutable</key>
+            <string>Browser Switch</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.adamabernathy.browserswitch</string>
+            <key>CFBundleInfoDictionaryVersion</key>
+            <string>6.0</string>
+            <key>CFBundleName</key>
+            <string>Browser Switch</string>
+            <key>CFBundlePackageType</key>
+            <string>APPL</string>
+            <key>CFBundleShortVersionString</key>
+            <string>1.0</string>
+            <key>CFBundleVersion</key>
+            <string>${GITHUB_RUN_NUMBER}</string>
+            <key>LSMinimumSystemVersion</key>
+            <string>12.0</string>
+            <key>LSUIElement</key>
+            <true/>
+            <key>NSHighResolutionCapable</key>
+            <true/>
+          </dict>
+          </plist>
+          PLIST
+
+      - name: Archive app bundle
+        run: |
+          cd dist
+          ditto -c -k --sequesterRsrc --keepParent "Browser Switch.app" "BrowserSwitch-macOS.zip"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BrowserSwitch-macOS
+          path: dist/BrowserSwitch-macOS.zip
+          if-no-files-found: error
+
+      - name: Publish GitHub release asset
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/BrowserSwitch-macOS.zip
+          generate_release_notes: true
