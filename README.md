@@ -52,11 +52,24 @@ Recommended shot: the open menu showing browser options, current checkmark, VPN/
 
 ## Build and Run (Terminal)
 
+Use this for development logs/debugging. This mode is attached to your terminal session:
+
 ```bash
 cd /Users/adamabernathy/dev/browserSwtich
 swift build
 swift run
 ```
+
+## Build and Run as a macOS App (No Terminal Window)
+
+Build a local `.app` bundle and launch it directly:
+
+```bash
+cd /Users/adamabernathy/dev/browserSwtich
+./scripts/build-app.sh --run
+```
+
+This creates `dist/Browser Switch.app`. You can double-click that app in Finder without needing a terminal window.
 
 ## Run Tests
 

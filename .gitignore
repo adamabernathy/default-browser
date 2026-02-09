@@ -32,6 +32,8 @@ playground.xcworkspace
 # .swiftpm
 
 .build/
+dist/
+*.profraw
 
 # CocoaPods
 #
