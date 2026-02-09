@@ -14,6 +14,8 @@ permissions:
 jobs:
   package:
     runs-on: macos-14
+    env:
+      BUILD_VERSION: ${{ github.run_number }}
 
     steps:
       - name: Checkout
@@ -77,7 +79,7 @@ jobs:
             <key>CFBundleShortVersionString</key>
             <string>1.0</string>
             <key>CFBundleVersion</key>
-            <string>${GITHUB_RUN_NUMBER}</string>
+            <string>${BUILD_VERSION}</string>
             <key>LSMinimumSystemVersion</key>
             <string>12.0</string>
             <key>LSUIElement</key>
@@ -93,6 +95,14 @@ jobs:
           cd dist
           ditto -c -k --sequesterRsrc --keepParent "Browser Switch.app" "BrowserSwitch-macOS.zip"
 
+      - name: Move current tag to this commit
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -f current "${GITHUB_SHA}"
+          git push origin refs/tags/current --force
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -100,12 +110,28 @@ jobs:
           path: dist/BrowserSwitch-macOS.zip
           if-no-files-found: error
 
-      - name: Publish GitHub release asset
-        if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main'
+      - name: Publish current release asset
+        if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref == 'refs/heads/main' && format('main-build-{0}', github.run_number) || github.ref_name }}
-          name: ${{ github.ref == 'refs/heads/main' && format('Main Build {0}', github.run_number) || github.ref_name }}
-          prerelease: ${{ github.ref == 'refs/heads/main' }}
+          tag_name: current
+          name: Current
+          prerelease: true
+          overwrite_files: true
+          body: |
+            Auto-published from `main`.
+            Build version: `${{ env.BUILD_VERSION }}`
+            Commit: `${{ github.sha }}`
+          files: dist/BrowserSwitch-macOS.zip
+          generate_release_notes: false
+
+      - name: Publish tagged release asset
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          prerelease: false
+          overwrite_files: true
           files: dist/BrowserSwitch-macOS.zip
           generate_release_notes: true
