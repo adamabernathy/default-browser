@@ -19,8 +19,22 @@ jobs:
           xcodebuild -version
           swift --version
 
-      - name: Run tests
-        run: swift test
+      - name: Run tests (no warnings/errors)
+        shell: bash
+        run: |
+          set -euo pipefail
+          swift test 2>&1 | tee /tmp/swift-test.log
+          if grep -Eqi '(^|[[:space:]])warning:|(^|[[:space:]])error:' /tmp/swift-test.log; then
+            echo "Tests produced warnings or errors."
+            exit 1
+          fi
 
-      - name: Build release binary
-        run: swift build -c release
+      - name: Build release binary (no warnings/errors)
+        shell: bash
+        run: |
+          set -euo pipefail
+          swift build -c release 2>&1 | tee /tmp/swift-build.log
+          if grep -Eqi '(^|[[:space:]])warning:|(^|[[:space:]])error:' /tmp/swift-build.log; then
+            echo "Release build produced warnings or errors."
+            exit 1
+          fi
