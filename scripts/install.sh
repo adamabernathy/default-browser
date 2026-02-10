@@ -4,17 +4,27 @@
 #
 # One-liner install (copy and paste into Terminal):
 #
-#   rm -rf /tmp/browser-selector-install && git clone https://github.com/adamabernathy/browser-selector /tmp/browser-selector-install && /tmp/browser-selector-install/scripts/install.sh && rm -rf /tmp/browser-selector-install
+#   curl -fsSL https://raw.githubusercontent.com/adamabernathy/browser-selector/main/scripts/install.sh | bash
 #
 # Requirements: Xcode or Xcode Command Line Tools with Swift 5.9+
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
-
+REPO_URL="https://github.com/adamabernathy/browser-selector"
 APP_NAME="Browser Switch"
 INSTALL_DIR="${HOME}/Applications"
+
+# Detect whether we're inside a repo checkout or running standalone (e.g., curl | bash).
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-.}")" 2>/dev/null && pwd)" || SCRIPT_DIR=""
+
+if [ -n "${SCRIPT_DIR}" ] && [ -f "${SCRIPT_DIR}/../Package.swift" ]; then
+    PROJECT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+else
+    PROJECT_DIR="$(mktemp -d)"
+    trap 'rm -rf "${PROJECT_DIR}"' EXIT
+    echo "Cloning ${REPO_URL}..."
+    git clone --depth 1 --quiet "${REPO_URL}" "${PROJECT_DIR}"
+fi
 
 cd "${PROJECT_DIR}"
 

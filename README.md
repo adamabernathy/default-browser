@@ -41,10 +41,10 @@ Recommended shot: the open menu showing browser options, current checkmark, VPN/
 Copy and paste this into Terminal:
 
 ```bash
-rm -rf /tmp/browser-selector-install && git clone https://github.com/adamabernathy/browser-selector /tmp/browser-selector-install && /tmp/browser-selector-install/scripts/install.sh && rm -rf /tmp/browser-selector-install
+curl -fsSL https://raw.githubusercontent.com/adamabernathy/browser-selector/main/scripts/install.sh | bash
 ```
 
-This clones the repo, compiles a release build, copies the app to `~/Applications`, and removes the install files. Requires macOS 12+ and Xcode (or Command Line Tools with Swift 5.9+).
+This clones the repo to a temp directory, compiles a release build, copies the app to `~/Applications`, and cleans up after itself. Requires macOS 12+ and Xcode (or Command Line Tools with Swift 5.9+).
 
 To uninstall:
 
