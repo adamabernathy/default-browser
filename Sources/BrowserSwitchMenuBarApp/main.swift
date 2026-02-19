@@ -23,18 +23,33 @@ final class BrowserSwitchMenuBarApp: NSObject, NSApplicationDelegate, NSMenuDele
     private var networkMonitor: NWPathMonitor?
     private let networkMonitorQueue = DispatchQueue(label: "BrowserSwitchMenuBarApp.NetworkMonitor")
 
+    private var menuBarSymbolName: String {
+        if #available(macOS 26, *) {
+            return "circle.grid.2x2.topleft.checkmark.filled"
+        } else {
+            return "figure.curling"
+        }
+    }
+
     private let preferredBrowserOrder = ["com.apple.Safari", "com.google.Chrome"]
     private let internetInfoRefreshInterval: TimeInterval = 60
     private let systemVPNStatusRefreshInterval: TimeInterval = 5
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        let runningInstances = NSRunningApplication.runningApplications(
+            withBundleIdentifier: Bundle.main.bundleIdentifier ?? "")
+            .filter { $0 != .current }
+        for instance in runningInstances {
+            instance.terminate()
+        }
+
         NSApp.setActivationPolicy(.accessory)
         NSApp.applicationIconImage = appIdentityIcon
 
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
             button.image = NSImage(
-                systemSymbolName: "circle.grid.2x2.topleft.checkmark.filled",
+                systemSymbolName: menuBarSymbolName,
                 accessibilityDescription: "Browser Switch")
             button.image?.isTemplate = true
             button.toolTip = "Browser Switch"
@@ -518,7 +533,7 @@ final class BrowserSwitchMenuBarApp: NSObject, NSApplicationDelegate, NSMenuDele
         NSBezierPath(roundedRect: bgRect, xRadius: 96, yRadius: 96).fill()
 
         if let symbol = NSImage(
-            systemSymbolName: "circle.grid.2x2.topleft.checkmark.filled",
+            systemSymbolName: menuBarSymbolName,
             accessibilityDescription: "Browser Switch")
         {
             symbol.isTemplate = false
