@@ -1,5 +1,6 @@
 import AppKit
 import CoreServices
+import IOKit.pwr_mgt
 import Network
 import ServiceManagement
 
@@ -12,6 +13,9 @@ final class BrowserSwitchMenuBarApp: NSObject, NSApplicationDelegate, NSMenuDele
     private var desktopIconsToggleItem: NSMenuItem?
     private var stageManagerToggleItem: NSMenuItem?
     private var showPowerTools = false
+    private var caffeineMenuItem: NSMenuItem?
+    private var caffeineEnabled = false
+    private var caffeineAssertionID: IOPMAssertionID = 0
     private lazy var appIdentityIcon: NSImage = makeAppIdentityIcon()
     private var internetInfo: InternetInfo?
     private var internetInfoRequestInFlight = false
@@ -62,6 +66,7 @@ final class BrowserSwitchMenuBarApp: NSObject, NSApplicationDelegate, NSMenuDele
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        stopCaffeineAssertion()
         networkMonitor?.cancel()
         networkMonitor = nil
     }
@@ -90,6 +95,16 @@ final class BrowserSwitchMenuBarApp: NSObject, NSApplicationDelegate, NSMenuDele
             browserMenuItems[bundleID] = item
         }
 
+        menu.addItem(.separator())
+
+        let caffeineItem = NSMenuItem(
+            title: caffeineEnabled ? "Caffeine" : "Caffeine",
+            action: #selector(toggleCaffeine),
+            keyEquivalent: "")
+        caffeineItem.target = self
+        menu.addItem(caffeineItem)
+        self.caffeineMenuItem = caffeineItem
+        
         menu.addItem(.separator())
 
         addInternetInfoItems(to: menu)
@@ -151,6 +166,7 @@ final class BrowserSwitchMenuBarApp: NSObject, NSApplicationDelegate, NSMenuDele
 
         refreshBrowserState()
         refreshRunOnStartupState()
+        refreshCaffeineState()
         refreshPowerToolsState()
         applyPowerToolsVisibility()
     }
@@ -283,6 +299,92 @@ final class BrowserSwitchMenuBarApp: NSObject, NSApplicationDelegate, NSMenuDele
         }
 
         refreshRunOnStartupState()
+    }
+
+    @objc
+    private func toggleCaffeine() {
+        caffeineEnabled.toggle()
+
+        if caffeineEnabled {
+            startCaffeineAssertion()
+        } else {
+            stopCaffeineAssertion()
+        }
+
+        refreshCaffeineState()
+    }
+
+    private func startCaffeineAssertion() {
+        let result = IOPMAssertionCreateWithName(
+            kIOPMAssertionTypePreventUserIdleDisplaySleep as CFString,
+            IOPMAssertionLevel(kIOPMAssertionLevelOn),
+            "Browser Switch Caffeine Mode" as CFString,
+            &caffeineAssertionID)
+
+        if result != kIOReturnSuccess {
+            caffeineEnabled = false
+            showAlert(
+                title: "Caffeine Mode Failed",
+                message: "macOS did not allow the app to prevent sleep.")
+        }
+    }
+
+    private func stopCaffeineAssertion() {
+        if caffeineAssertionID != 0 {
+            IOPMAssertionRelease(caffeineAssertionID)
+            caffeineAssertionID = 0
+        }
+    }
+
+    private func refreshCaffeineState() {
+        guard let item = caffeineMenuItem else { return }
+
+        item.title = caffeineEnabled ? "Caffeine" : "Caffeine"
+
+        if caffeineEnabled {
+            item.image = caffeineOnImage()
+        } else {
+            let image = NSImage(
+                systemSymbolName: "cup.and.saucer.fill",
+                accessibilityDescription: "Caffeine Off")
+            image?.size = NSSize(width: 16, height: 16)
+            item.image = image
+        }
+    }
+
+    private func caffeineOnImage() -> NSImage? {
+        guard let cupImage = NSImage(
+            systemSymbolName: "cup.and.heat.waves.fill",
+            accessibilityDescription: "Caffeine On")
+        else {
+            return nil
+        }
+
+        let cupSize = NSSize(width: 16, height: 16)
+        let dotDiameter: CGFloat = 6
+        let padding: CGFloat = 1
+        let totalWidth = dotDiameter + padding + cupSize.width
+        let compositeSize = NSSize(width: totalWidth, height: cupSize.height)
+
+        let composite = NSImage(size: compositeSize)
+        composite.lockFocus()
+
+        NSColor.systemGreen.setFill()
+        let dotRect = NSRect(
+            x: 0,
+            y: (cupSize.height - dotDiameter) / 2,
+            width: dotDiameter,
+            height: dotDiameter)
+        NSBezierPath(ovalIn: dotRect).fill()
+
+        cupImage.draw(
+            in: NSRect(x: dotDiameter + padding, y: 0, width: cupSize.width, height: cupSize.height),
+            from: .zero,
+            operation: .sourceOver,
+            fraction: 1.0)
+
+        composite.unlockFocus()
+        return composite
     }
 
     private func refreshBrowserState() {
