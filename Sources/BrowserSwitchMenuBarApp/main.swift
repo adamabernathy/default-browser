@@ -104,14 +104,6 @@ final class BrowserSwitchMenuBarApp: NSObject, NSApplicationDelegate, NSMenuDele
         caffeineItem.target = self
         menu.addItem(caffeineItem)
         self.caffeineMenuItem = caffeineItem
-        
-        menu.addItem(.separator())
-
-        addInternetInfoItems(to: menu)
-
-        let powerToolsSeparator = NSMenuItem.separator()
-        menu.addItem(powerToolsSeparator)
-        self.powerToolsSeparatorItem = powerToolsSeparator
 
         let desktopIconsToggleItem = NSMenuItem(
             title: "Toggle Desktop Icons",
@@ -120,6 +112,14 @@ final class BrowserSwitchMenuBarApp: NSObject, NSApplicationDelegate, NSMenuDele
         desktopIconsToggleItem.target = self
         menu.addItem(desktopIconsToggleItem)
         self.desktopIconsToggleItem = desktopIconsToggleItem
+        
+        menu.addItem(.separator())
+
+        addInternetInfoItems(to: menu)
+
+        let powerToolsSeparator = NSMenuItem.separator()
+        menu.addItem(powerToolsSeparator)
+        self.powerToolsSeparatorItem = powerToolsSeparator
 
         let stageManagerToggleItem = NSMenuItem(
             title: "Toggle Stage Manager",
@@ -675,7 +675,6 @@ final class BrowserSwitchMenuBarApp: NSObject, NSApplicationDelegate, NSMenuDele
     private func applyPowerToolsVisibility() {
         let hidden = !showPowerTools
         powerToolsSeparatorItem?.isHidden = hidden
-        desktopIconsToggleItem?.isHidden = hidden
         stageManagerToggleItem?.isHidden = hidden
         for item in optionHiddenInternetInfoItems {
             item.isHidden = hidden
