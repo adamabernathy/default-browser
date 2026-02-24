@@ -26,6 +26,7 @@ final class BrowserSwitchMenuBarApp: NSObject, NSApplicationDelegate, NSMenuDele
     private var systemVPNStatusLastRefresh: Date?
     private var networkMonitor: NWPathMonitor?
     private let networkMonitorQueue = DispatchQueue(label: "BrowserSwitchMenuBarApp.NetworkMonitor")
+    private var appearanceObservation: NSKeyValueObservation?
 
     private var menuBarSymbolName: String {
         if #available(macOS 26, *) {
@@ -63,6 +64,7 @@ final class BrowserSwitchMenuBarApp: NSObject, NSApplicationDelegate, NSMenuDele
         startNetworkMonitor()
         refreshInternetInfoIfNeeded()
         refreshSystemVPNStatusIfNeeded(force: true)
+        startObservingAppearanceChanges()
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -376,24 +378,22 @@ final class BrowserSwitchMenuBarApp: NSObject, NSApplicationDelegate, NSMenuDele
         let totalWidth = dotDiameter + padding + cupSize.width
         let compositeSize = NSSize(width: totalWidth, height: cupSize.height)
 
-        let composite = NSImage(size: compositeSize)
-        composite.lockFocus()
+        let composite = NSImage(size: compositeSize, flipped: false) { drawRect in
+            NSColor.systemGreen.setFill()
+            let dotRect = NSRect(
+                x: 0,
+                y: (cupSize.height - dotDiameter) / 2,
+                width: dotDiameter,
+                height: dotDiameter)
+            NSBezierPath(ovalIn: dotRect).fill()
 
-        NSColor.systemGreen.setFill()
-        let dotRect = NSRect(
-            x: 0,
-            y: (cupSize.height - dotDiameter) / 2,
-            width: dotDiameter,
-            height: dotDiameter)
-        NSBezierPath(ovalIn: dotRect).fill()
-
-        cupImage.draw(
-            in: NSRect(x: dotDiameter + padding, y: 0, width: cupSize.width, height: cupSize.height),
-            from: .zero,
-            operation: .sourceOver,
-            fraction: 1.0)
-
-        composite.unlockFocus()
+            cupImage.draw(
+                in: NSRect(x: dotDiameter + padding, y: 0, width: cupSize.width, height: cupSize.height),
+                from: .zero,
+                operation: .sourceOver,
+                fraction: 1.0)
+            return true
+        }
         return composite
     }
 
@@ -590,6 +590,14 @@ final class BrowserSwitchMenuBarApp: NSObject, NSApplicationDelegate, NSMenuDele
         }.resume()
     }
 
+    private func startObservingAppearanceChanges() {
+        appearanceObservation = NSApp.observe(\.effectiveAppearance) { [weak self] _, _ in
+            guard let self else { return }
+            self.appIdentityIcon = self.makeAppIdentityIcon()
+            NSApp.applicationIconImage = self.appIdentityIcon
+        }
+    }
+
     private func startNetworkMonitor() {
         let monitor = NWPathMonitor()
         monitor.pathUpdateHandler = { [weak self] _ in
@@ -637,23 +645,23 @@ final class BrowserSwitchMenuBarApp: NSObject, NSApplicationDelegate, NSMenuDele
 
     private func makeAppIdentityIcon() -> NSImage {
         let size = NSSize(width: 512, height: 512)
-        let image = NSImage(size: size)
-        image.lockFocus()
+        let image = NSImage(size: size, flipped: false) { drawRect in
+            let bgRect = NSRect(origin: .zero, size: size)
+            NSColor.windowBackgroundColor.setFill()
+            NSBezierPath(roundedRect: bgRect, xRadius: 96, yRadius: 96).fill()
 
-        let bgRect = NSRect(origin: .zero, size: size)
-        NSColor.windowBackgroundColor.setFill()
-        NSBezierPath(roundedRect: bgRect, xRadius: 96, yRadius: 96).fill()
-
-        if let symbol = NSImage(
-            systemSymbolName: menuBarSymbolName,
-            accessibilityDescription: "Browser Switch")
-        {
-            symbol.isTemplate = false
-            symbol.withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 300, weight: .medium))?
-                .draw(in: NSRect(x: 106, y: 106, width: 300, height: 300))
+            if let symbol = NSImage(
+                systemSymbolName: self.menuBarSymbolName,
+                accessibilityDescription: "Browser Switch")
+            {
+                let config = NSImage.SymbolConfiguration(pointSize: 300, weight: .medium)
+                    .applying(NSImage.SymbolConfiguration(paletteColors: [.labelColor]))
+                symbol.isTemplate = false
+                symbol.withSymbolConfiguration(config)?
+                    .draw(in: NSRect(x: 106, y: 106, width: 300, height: 300))
+            }
+            return true
         }
-
-        image.unlockFocus()
         return image
     }
 
