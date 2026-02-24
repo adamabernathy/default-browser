@@ -11,6 +11,13 @@ APP_DIR="${DIST_DIR}/${APP_NAME}.app"
 EXECUTABLE_PATH="${APP_DIR}/Contents/MacOS/${APP_NAME}"
 RUN_AFTER_BUILD=0
 
+# Detect build version (commit hash or LOCAL BUILD)
+if git rev-parse --git-dir > /dev/null 2>&1; then
+  BUILD_VERSION=$(git rev-parse --short HEAD 2>/dev/null || echo "LOCAL BUILD")
+else
+  BUILD_VERSION="LOCAL BUILD"
+fi
+
 # Prefer the full Xcode toolchain when available.
 if [[ -z "${DEVELOPER_DIR:-}" && -d "/Applications/Xcode.app/Contents/Developer" ]]; then
   export DEVELOPER_DIR="/Applications/Xcode.app/Contents/Developer"
@@ -72,7 +79,7 @@ cat > "${APP_DIR}/Contents/Info.plist" <<PLIST
   <key>CFBundleShortVersionString</key>
   <string>${VERSION}</string>
   <key>CFBundleVersion</key>
-  <string>1</string>
+  <string>${BUILD_VERSION}</string>
   <key>LSMinimumSystemVersion</key>
   <string>12.0</string>
   <key>LSUIElement</key>
