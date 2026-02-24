@@ -40,3 +40,6 @@ fi
 
 cp -R "dist/${APP_NAME}.app" "${INSTALL_DIR}/${APP_NAME}.app"
 echo "Installed to ${INSTALL_DIR}/${APP_NAME}.app"
+echo "Launching ${APP_NAME}..."
+open "${INSTALL_DIR}/${APP_NAME}.app"
+
