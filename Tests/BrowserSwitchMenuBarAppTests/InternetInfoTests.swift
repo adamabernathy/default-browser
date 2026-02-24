@@ -35,6 +35,59 @@ final class InternetInfoTests: XCTestCase {
         XCTAssertEqual(info.location, "Portland, United States")
     }
 
+    func testDecodeReturnsNilForInvalidJSON() {
+        let info = InternetInfoDecoder.decode(from: Data("not json".utf8))
+        XCTAssertNil(info)
+    }
+
+    func testDecodeReturnsNilForEmptyData() {
+        let info = InternetInfoDecoder.decode(from: Data())
+        XCTAssertNil(info)
+    }
+
+    func testDecodeTrimsWhitespaceFromFields() throws {
+        let json = """
+        {
+          "YourFuckingIPAddress": "  10.0.0.1  ",
+          "YourFuckingISP": "  Trimmed ISP  ",
+          "YourFuckingLocation": "  Trimmed Location  "
+        }
+        """
+
+        let info = try XCTUnwrap(InternetInfoDecoder.decode(from: Data(json.utf8)))
+        XCTAssertEqual(info.ipAddress, "10.0.0.1")
+        XCTAssertEqual(info.isp, "Trimmed ISP")
+        XCTAssertEqual(info.location, "Trimmed Location")
+    }
+
+    func testDecodeTreatsEmptyStringsAsNil() throws {
+        let json = """
+        {
+          "YourFuckingIPAddress": "",
+          "YourFuckingISP": "   ",
+          "YourFuckingLocation": ""
+        }
+        """
+
+        let info = try XCTUnwrap(InternetInfoDecoder.decode(from: Data(json.utf8)))
+        XCTAssertNil(info.ipAddress)
+        XCTAssertNil(info.isp)
+        XCTAssertNil(info.location)
+    }
+
+    func testDecodeIncludesVPNField() throws {
+        let json = """
+        {
+          "YourFuckingIPAddress": "1.2.3.4",
+          "YourFuckingISP": "Example ISP",
+          "YourFuckingVPN": true
+        }
+        """
+
+        let info = try XCTUnwrap(InternetInfoDecoder.decode(from: Data(json.utf8)))
+        XCTAssertEqual(info.vpn, true)
+    }
+
     func testMenuLinesOnlyHideIPWhenNoTorValue() {
         let info = InternetInfo(
             ipAddress: "1.2.3.4",
@@ -71,6 +124,33 @@ final class InternetInfoTests: XCTestCase {
                 .init(title: "Location: Portland, United States", isHiddenWithoutOptionKey: false),
                 .init(title: "Tor Exit: Yes", isHiddenWithoutOptionKey: true)
             ]
+        )
+    }
+
+    func testMenuLinesReturnsEmptyForAllNilFields() {
+        let info = InternetInfo(
+            ipAddress: nil,
+            isp: nil,
+            location: nil,
+            vpn: nil,
+            torExit: nil
+        )
+
+        XCTAssertEqual(info.menuLines(), [])
+    }
+
+    func testMenuLinesTorExitFalseShowsNo() {
+        let info = InternetInfo(
+            ipAddress: nil,
+            isp: nil,
+            location: nil,
+            vpn: nil,
+            torExit: false
+        )
+
+        XCTAssertEqual(
+            info.menuLines(),
+            [.init(title: "Tor Exit: No", isHiddenWithoutOptionKey: true)]
         )
     }
 }

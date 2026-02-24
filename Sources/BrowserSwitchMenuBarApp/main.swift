@@ -289,14 +289,6 @@ final class BrowserSwitchMenuBarApp: NSObject, NSApplicationDelegate, NSMenuDele
 
     @objc
     private func toggleRunOnStartup() {
-        guard #available(macOS 13.0, *) else {
-            showAlert(
-                title: "Run on Startup Unavailable",
-                message: "Run on Startup requires macOS 13 or later.")
-            refreshRunOnStartupState()
-            return
-        }
-
         do {
             let service = SMAppService.mainApp
             if service.status == .enabled {
@@ -406,12 +398,6 @@ final class BrowserSwitchMenuBarApp: NSObject, NSApplicationDelegate, NSMenuDele
 
     private func refreshRunOnStartupState() {
         guard let item = runOnStartupItem else { return }
-
-        guard #available(macOS 13.0, *) else {
-            item.state = .off
-            item.isEnabled = false
-            return
-        }
 
         let status = SMAppService.mainApp.status
         item.isEnabled = true

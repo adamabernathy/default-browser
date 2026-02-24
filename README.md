@@ -8,8 +8,6 @@ If you regularly jump between Chrome, Safari, Arc, Firefox, or Edge for differen
 
 ![Browser Switch menu screenshot](docs/images/screenshot-1.png)
 
-Recommended shot: the open menu showing browser options, current checkmark, VPN/internet context rows, and settings actions.
-
 ## Why It’s Useful
 
 - Save time: switch default browser instantly from the menu bar
