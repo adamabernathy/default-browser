@@ -1,6 +1,6 @@
 # Browser Switch Wiki
 
-Browser Switch is a macOS menu bar utility for changing your default web browser without opening System Settings. It sits in the menu bar, shows every browser macOS knows about, and lets you switch with one click.
+Default Browser is a macOS menu bar utility for changing your default web browser without opening System Settings. It sits in the menu bar, shows every browser macOS knows about, and lets you switch with one click.
 
 This wiki covers the app's visible features, its hidden Option-key commands, how it detects browsers and network state, and how the build and release pipeline works.
 

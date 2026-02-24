@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "BrowserSwitchMenuBarApp",
     platforms: [
-        .macOS(.v12)
+        .macOS(.v14)
     ],
     products: [
         .executable(name: "BrowserSwitchMenuBarApp", targets: ["BrowserSwitchMenuBarApp"])

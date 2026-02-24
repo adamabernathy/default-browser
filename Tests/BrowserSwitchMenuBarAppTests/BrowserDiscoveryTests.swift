@@ -51,6 +51,53 @@ final class BrowserDiscoveryTests: XCTestCase {
         XCTAssertTrue(BrowserDiscovery.isPreferredInstallLocation(userAppsURL, over: otherURL, homeDirectory: home))
     }
 
+    func testOrderedBundleIDsReturnsEmptyForNoCandidates() {
+        let result = BrowserDiscovery.orderedBundleIDs(
+            preferredOrder: ["com.apple.Safari"],
+            candidates: [],
+            homeDirectory: home
+        )
+
+        XCTAssertEqual(result, [])
+    }
+
+    func testOrderedBundleIDsSortsNonPreferredAlphabetically() {
+        let candidates: [BrowserCandidateInfo] = [
+            .init(bundleID: "com.example.zebra", appURL: URL(fileURLWithPath: "/Applications/Zebra.app"), displayName: "Zebra"),
+            .init(bundleID: "com.example.alpha", appURL: URL(fileURLWithPath: "/Applications/Alpha.app"), displayName: "Alpha")
+        ]
+
+        let result = BrowserDiscovery.orderedBundleIDs(
+            preferredOrder: [],
+            candidates: candidates,
+            homeDirectory: home
+        )
+
+        XCTAssertEqual(result, ["com.example.alpha", "com.example.zebra"])
+    }
+
+    func testInstallLocationRankPrefersSystemApplicationsOverAll() {
+        let systemURL = URL(fileURLWithPath: "/Applications/Browser.app")
+        let userURL = URL(fileURLWithPath: "/Users/tester/Applications/Browser.app")
+
+        XCTAssertTrue(BrowserDiscovery.isPreferredInstallLocation(systemURL, over: userURL, homeDirectory: home))
+    }
+
+    func testInstallLocationRankValues() {
+        XCTAssertEqual(
+            BrowserDiscovery.installLocationRank(URL(fileURLWithPath: "/Applications/Test.app"), homeDirectory: home),
+            0
+        )
+        XCTAssertEqual(
+            BrowserDiscovery.installLocationRank(URL(fileURLWithPath: "/Users/tester/Applications/Test.app"), homeDirectory: home),
+            1
+        )
+        XCTAssertEqual(
+            BrowserDiscovery.installLocationRank(URL(fileURLWithPath: "/opt/Test.app"), homeDirectory: home),
+            2
+        )
+    }
+
     func testEmptyDisplayNameFallsBackToBundleIDAndDoesNotDeduplicate() {
         let candidates: [BrowserCandidateInfo] = [
             .init(bundleID: "com.example.one", appURL: URL(fileURLWithPath: "/Applications/One.app"), displayName: "   "),
