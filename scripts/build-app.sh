@@ -4,12 +4,20 @@ set -euo pipefail
 APP_NAME="Browser Switch"
 PRODUCT_NAME="BrowserSwitchMenuBarApp"
 BUNDLE_ID="com.adamabernathy.browserswitch"
-VERSION="1.0"
 BUILD_CONFIG="release"
 DIST_DIR="dist"
 APP_DIR="${DIST_DIR}/${APP_NAME}.app"
 EXECUTABLE_PATH="${APP_DIR}/Contents/MacOS/${APP_NAME}"
 RUN_AFTER_BUILD=0
+
+# Read version from VERSION file
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+if [ -f "${PROJECT_ROOT}/VERSION" ]; then
+  VERSION=$(cat "${PROJECT_ROOT}/VERSION")
+else
+  VERSION="1.0.0"
+fi
 
 # Detect build version (commit hash or LOCAL BUILD)
 if git rev-parse --git-dir > /dev/null 2>&1; then
