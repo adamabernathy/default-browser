@@ -154,10 +154,6 @@ final class BrowserSwitchMenuBarApp: NSObject, NSApplicationDelegate, NSMenuDele
 
         menu.addItem(.separator())
 
-        let checkForUpdatesItem = NSMenuItem(title: "Check for Updates…", action: #selector(checkForUpdates), keyEquivalent: "")
-        checkForUpdatesItem.target = self
-        menu.addItem(checkForUpdatesItem)
-
         let aboutItem = NSMenuItem(title: "About", action: #selector(showAbout), keyEquivalent: "")
         aboutItem.target = self
         menu.addItem(aboutItem)
@@ -235,149 +231,10 @@ final class BrowserSwitchMenuBarApp: NSObject, NSApplicationDelegate, NSMenuDele
         let copyright = NSAttributedString(string: creditsText)
         
         NSApp.orderFrontStandardAboutPanel(options: [
-            NSAboutPanelOptionKey.applicationName: "Browser Switch",
-            NSAboutPanelOptionKey.applicationIcon: appIdentityIcon,
-            NSAboutPanelOptionKey.credits: copyright
+            .applicationName: "Browser Switch",
+            .applicationIcon: appIdentityIcon,
+            .credits: copyright
         ])
-    }
-
-    @objc
-    private func checkForUpdates() {
-        let currentBuild = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "Unknown"
-        
-        // Don't check for updates on local builds
-        if currentBuild == "LOCAL BUILD" {
-            showAlert(
-                title: "Updates Unavailable",
-                message: "This is a local build. Updates are only available for installed versions.")
-            return
-        }
-        
-        // Show checking alert
-        DispatchQueue.main.async {
-            NSApp.activate(ignoringOtherApps: true)
-        }
-        
-        guard let url = URL(string: "https://api.github.com/repos/adamabernathy/browser-selector/commits/main") else {
-            showAlert(
-                title: "Update Check Failed",
-                message: "Could not connect to the update server.")
-            return
-        }
-        
-        var request = URLRequest(url: url)
-        request.timeoutInterval = 10
-        request.setValue("application/vnd.github.v3+json", forHTTPHeaderField: "Accept")
-        
-        URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
-            guard let self else { return }
-            
-            DispatchQueue.main.async {
-                if let error = error {
-                    self.showAlert(
-                        title: "Update Check Failed",
-                        message: "Could not check for updates: \(error.localizedDescription)")
-                    return
-                }
-                
-                guard let data = data else {
-                    self.showAlert(
-                        title: "Update Check Failed",
-                        message: "No data received from update server.")
-                    return
-                }
-                
-                do {
-                    if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-                       let sha = json["sha"] as? String {
-                        let latestCommit = String(sha.prefix(7))
-                        
-                        if latestCommit == currentBuild {
-                            self.showUpdateAlert(
-                                title: "You're Up to Date",
-                                message: "Browser Switch \(currentBuild) is currently the newest version available.",
-                                showInstallButton: false)
-                        } else {
-                            self.showUpdateAlert(
-                                title: "Update Available",
-                                message: "A new version is available.\n\nCurrent: \(currentBuild)\nLatest: \(latestCommit)\n\nWould you like to install it now?",
-                                showInstallButton: true)
-                        }
-                    } else {
-                        self.showAlert(
-                            title: "Update Check Failed",
-                            message: "Could not parse update information.")
-                    }
-                } catch {
-                    self.showAlert(
-                        title: "Update Check Failed",
-                        message: "Could not parse update information: \(error.localizedDescription)")
-                }
-            }
-        }.resume()
-    }
-    
-    private func showUpdateAlert(title: String, message: String, showInstallButton: Bool) {
-        NSApp.activate(ignoringOtherApps: true)
-        let alert = NSAlert()
-        alert.alertStyle = showInstallButton ? .informational : .informational
-        alert.messageText = title
-        alert.informativeText = message
-        
-        if showInstallButton {
-            alert.addButton(withTitle: "Install Update")
-            alert.addButton(withTitle: "Later")
-            
-            let response = alert.runModal()
-            if response == .alertFirstButtonReturn {
-                installUpdate()
-            }
-        } else {
-            alert.addButton(withTitle: "OK")
-            alert.runModal()
-        }
-    }
-    
-    private func installUpdate() {
-        let script = """
-        #!/bin/bash
-        curl -fsSL https://raw.githubusercontent.com/adamabernathy/browser-selector/main/scripts/install.sh | bash
-        """
-        
-        let tempScriptURL = FileManager.default.temporaryDirectory.appendingPathComponent("browser-switch-update.sh")
-        
-        do {
-            try script.write(to: tempScriptURL, atomically: true, encoding: .utf8)
-            try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: tempScriptURL.path)
-            
-            // Open Terminal and run the update script
-            let appleScript = """
-            tell application "Terminal"
-                activate
-                do script "\(tempScriptURL.path); exit"
-            end tell
-            """
-            
-            if let scriptObject = NSAppleScript(source: appleScript) {
-                var error: NSDictionary?
-                scriptObject.executeAndReturnError(&error)
-                
-                if error == nil {
-                    // Quit the current app so it can be replaced
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                        NSApp.terminate(nil)
-                    }
-                } else {
-                    showAlert(
-                        title: "Update Failed",
-                        message: "Could not launch Terminal to install update.")
-                }
-            }
-        } catch {
-            showAlert(
-                title: "Update Failed",
-                message: "Could not create update script: \(error.localizedDescription)")
-        }
     }
 
     @objc
