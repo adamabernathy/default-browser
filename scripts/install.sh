@@ -40,8 +40,5 @@ fi
 
 cp -R "dist/${APP_NAME}.app" "${INSTALL_DIR}/${APP_NAME}.app"
 echo "Installed to ${INSTALL_DIR}/${APP_NAME}.app"
-<<<<<<< HEAD
 echo "Launching ${APP_NAME}..."
 open "${INSTALL_DIR}/${APP_NAME}.app"
-=======
->>>>>>> parent of d622e91 (updated build script to auto load)
