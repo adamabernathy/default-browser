@@ -2,12 +2,12 @@
 
 ## Prerequisites
 
-- macOS 12 or later
+- macOS 14 (Sonoma) or later
 - Xcode, or the Xcode Command Line Tools with Swift 5.9+
 
 If you only have the Command Line Tools (not the full Xcode app), the build will still work. The install script and build script both prefer the full Xcode toolchain at `/Applications/Xcode.app/Contents/Developer` when it exists, and fall back to whatever `xcrun` resolves.
 
-## Install from source
+## Install from Source
 
 Copy and paste this into Terminal:
 
@@ -15,7 +15,7 @@ Copy and paste this into Terminal:
 curl -fsSL https://raw.githubusercontent.com/adamabernathy/browser-selector/main/scripts/install.sh | bash
 ```
 
-This clones the repo to a temp directory, compiles a release build, assembles the `.app` bundle, copies it to `~/Applications/Browser Switch.app`, and deletes the clone automatically. The script also works if run directly from a local checkout (`./scripts/install.sh`), in which case it skips the clone and builds from the working tree.
+This clones the repo to a temp directory, compiles a release build, assembles the `.app` bundle, copies it to `~/Applications/Browser Switch.app`, and deletes the clone automatically. The script also works from a local checkout (`./scripts/install.sh`), in which case it skips the clone and builds from the working tree.
 
 The app installs to `~/Applications` (per-user), not `/Applications` (system-wide), so no `sudo` is needed.
 
@@ -33,4 +33,4 @@ If you enabled Run on Startup, macOS should clean up the login item automaticall
 
 ## Launching
 
-After install, open the app from `~/Applications/Browser Switch.app` or Spotlight. It appears in the menu bar as a grid icon with a checkmark. There is no Dock icon by default (`LSUIElement` is set to `true` in the Info.plist).
+After install, open the app from `~/Applications/Browser Switch.app` or Spotlight. It appears in the menu bar as a grid icon. There is no Dock icon by default (`LSUIElement` is set to `true`).
