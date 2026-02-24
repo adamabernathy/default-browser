@@ -33,6 +33,13 @@ echo "Building ${APP_NAME}..."
 
 mkdir -p "${INSTALL_DIR}"
 
+# Check if the app is currently running and quit it
+if pgrep -xq "Browser Switch"; then
+    echo "Closing running instance of ${APP_NAME}..."
+    osascript -e "quit app \"${APP_NAME}\"" 2>/dev/null || killall "Browser Switch" 2>/dev/null || true
+    sleep 1
+fi
+
 if [ -d "${INSTALL_DIR}/${APP_NAME}.app" ]; then
     echo "Removing previous install..."
     rm -rf "${INSTALL_DIR}/${APP_NAME}.app"
