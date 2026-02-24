@@ -28,7 +28,14 @@ fi
 
 cd "${PROJECT_DIR}"
 
-echo "Building ${APP_NAME}..."
+# Read version if available
+if [ -f "VERSION" ]; then
+    VERSION=$(cat VERSION)
+    echo "Building ${APP_NAME} v${VERSION}..."
+else
+    echo "Building ${APP_NAME}..."
+fi
+
 ./scripts/build-app.sh --release
 
 mkdir -p "${INSTALL_DIR}"

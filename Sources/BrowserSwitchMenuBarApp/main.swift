@@ -220,11 +220,12 @@ final class BrowserSwitchMenuBarApp: NSObject, NSApplicationDelegate, NSMenuDele
     private func showAbout() {
         NSApp.activate(ignoringOtherApps: true)
         
+        let versionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.0"
         let buildString = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "Unknown"
         
         // Create formatted credits with version info
         let creditsText = """
-        Version: \(buildString)
+        Version \(versionString) (Build \(buildString))
         
         (C) 2026 Adam Abernathy, LLC
         """
