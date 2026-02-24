@@ -1,0 +1,53 @@
+name: Sync Wiki
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "wiki/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-wiki:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Sync wiki folder to GitHub Wiki
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          WIKI_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git"
+          WIKI_DIR="${RUNNER_TEMP}/wiki"
+
+          git clone "${WIKI_URL}" "${WIKI_DIR}" 2>/dev/null || {
+            mkdir -p "${WIKI_DIR}"
+            cd "${WIKI_DIR}"
+            git init
+            git remote add origin "${WIKI_URL}"
+          }
+
+          # Replace wiki contents with repo wiki/ folder
+          find "${WIKI_DIR}" -maxdepth 1 -not -name '.git' -not -path "${WIKI_DIR}" -exec rm -rf {} +
+          cp wiki/* "${WIKI_DIR}/"
+
+          cd "${WIKI_DIR}"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "Wiki is already up to date."
+          else
+            git commit -m "Sync wiki from ${GITHUB_SHA::7}"
+            git push origin master
+          fi
