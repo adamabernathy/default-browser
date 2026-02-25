@@ -1,0 +1,103 @@
+name: Bug report
+description: Report a problem with Browser Switch behavior
+title: "Bug: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug.
+
+        Please include enough detail to reproduce the issue on macOS 14+ and describe what you expected to happen.
+
+  - type: input
+    id: app_version
+    attributes:
+      label: Browser Switch version
+      description: Use the About panel version/build if available.
+      placeholder: "e.g. 1.2.3 (Build abc1234)"
+    validations:
+      required: true
+
+  - type: input
+    id: macos_version
+    attributes:
+      label: macOS version
+      description: Browser Switch targets macOS 14+.
+      placeholder: "e.g. macOS 14.7.2 (Sonoma)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install_method
+    attributes:
+      label: How did you install or run Browser Switch?
+      options:
+        - GitHub Releases app build
+        - scripts/install.sh
+        - Local source build (swift run)
+        - Local built app (scripts/build-app.sh)
+        - Xcode run
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which area is affected?
+      options:
+        - Browser switching
+        - Menu bar UI / menu behavior
+        - Network / VPN context
+        - Power tools (Option key features)
+        - Run on Startup / settings
+        - Packaging / install / launch
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: Steps to reproduce
+      description: List exact steps so someone else can reproduce it.
+      placeholder: |
+        1. Launch Browser Switch
+        2. Open the menu bar menu
+        3. Click ...
+        4. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual_behavior
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs_or_media
+    attributes:
+      label: Logs, screenshots, or recordings (optional)
+      description: Paste any terminal output or drag in screenshots/screen recordings if helpful.
+      render: shell
+
+  - type: checkboxes
+    id: pre_submit_checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for duplicates.
+          required: true
+        - label: I checked the README/wiki for setup or usage guidance first.
+          required: true

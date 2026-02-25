@@ -15,14 +15,14 @@ No `.xcodeproj`. SPM only — Xcode can open the folder directly.
 
 ## Project Layout
 
-| Path | Purpose |
-| --- | --- |
-| `Sources/BrowserSwitchMenuBarApp/main.swift` | App delegate, menu bar UI, all primary logic |
-| `Sources/BrowserSwitchMenuBarApp/BrowserDiscovery.swift` | Browser detection, deduplication, ordering |
-| `Sources/BrowserSwitchMenuBarApp/InternetInfo.swift` | IP/ISP/location model and JSON decoding |
-| `Sources/BrowserSwitchMenuBarApp/SystemVPNStatus.swift` | VPN detection via `scutil` and `netstat` |
-| `Tests/BrowserSwitchMenuBarAppTests/` | Unit tests, one file per source type |
-| `scripts/` | `build-app.sh`, `bump-version.sh`, `install.sh` |
+| Path                                                     | Purpose                                         |
+| -------------------------------------------------------- | ----------------------------------------------- |
+| `Sources/BrowserSwitchMenuBarApp/main.swift`             | App delegate, menu bar UI, all primary logic    |
+| `Sources/BrowserSwitchMenuBarApp/BrowserDiscovery.swift` | Browser detection, deduplication, ordering      |
+| `Sources/BrowserSwitchMenuBarApp/InternetInfo.swift`     | IP/ISP/location model and JSON decoding         |
+| `Sources/BrowserSwitchMenuBarApp/SystemVPNStatus.swift`  | VPN detection via `scutil` and `netstat`        |
+| `Tests/BrowserSwitchMenuBarAppTests/`                    | Unit tests, one file per source type            |
+| `scripts/`                                               | `build-app.sh`, `bump-version.sh`, `install.sh` |
 
 ## Architecture
 
@@ -86,3 +86,44 @@ This app must feel native — match system menu bar extras (Wi-Fi, Battery, Blue
 - ATX headings (`#`). One `# H1` per file. Blank lines around headings, code blocks, and lists.
 - `-` for unordered lists. Fenced code blocks with language tags. Inline links with relative paths.
 - Backticks for code, filenames, and commands. No HTML.
+- When appropiate, feel free to use GFM callouts as defined below.
+
+> [!NOTE]  
+> Highlights information that users should take into account, even when skimming.
+
+> [!TIP]
+> Optional information to help a user be more successful.
+
+> [!IMPORTANT]  
+> Crucial information necessary for users to succeed.
+
+> [!WARNING]  
+> Critical content demanding immediate user attention due to potential risks.
+
+> [!CAUTION]
+> Negative potential consequences of an action.
+
+## GitHub Issues Workflow
+
+When working on a GitHub issue:
+
+1. **Create a branch** named `Issue-N` where `N` is the issue number before starting any work.
+
+   ```sh
+   git checkout -b Issue-N
+   ```
+
+2. **Work on the issue** on that branch.
+
+3. **Tag the issue** at the bottom of every commit message related to the issue:
+
+   ```sh
+   Closes #N
+   ```
+
+   Example commit message:
+
+   ```sh
+   Fix license expiration validation logic
+
+   Closes #42

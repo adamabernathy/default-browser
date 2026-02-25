@@ -1,0 +1,57 @@
+name: Documentation update
+description: Report missing, incorrect, or unclear docs
+title: "Docs: "
+labels:
+  - documentation
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for README, wiki, install instructions, or contributor/repo documentation issues.
+
+  - type: dropdown
+    id: documentation_area
+    attributes:
+      label: Documentation area
+      options:
+        - README
+        - Wiki
+        - Installation instructions
+        - Contributor docs / templates
+        - Scripts help text
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: page_or_file
+    attributes:
+      label: Page or file (optional)
+      description: File path or URL if you know it.
+      placeholder: "e.g. README.md or wiki/Installation.md"
+
+  - type: textarea
+    id: issue_description
+    attributes:
+      label: What is wrong or missing?
+      description: Be specific about what is confusing, outdated, or incorrect.
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggested_improvement
+    attributes:
+      label: Suggested improvement
+      description: What should the docs say instead?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: pre_submit_checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I checked the README and wiki pages for the answer.
+          required: true
+        - label: I searched existing documentation issues.
+          required: true
