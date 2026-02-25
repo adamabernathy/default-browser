@@ -1,0 +1,74 @@
+name: UI / UX issue
+description: Report a macOS UI, UX, HIG, or accessibility issue
+title: "UI/UX: "
+labels:
+  - hig
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for menu behavior, icons, accessibility, dark mode, alerts, or other macOS UX issues.
+
+        Browser Switch aims to match Apple Human Interface Guidelines and standard macOS menu bar extra behavior.
+
+  - type: dropdown
+    id: hig_category
+    attributes:
+      label: UI / UX category
+      options:
+        - Menus / menu structure
+        - SF Symbols / iconography
+        - Dark mode / contrast
+        - Accessibility (VoiceOver, labels, text vs color)
+        - Alerts / messaging
+        - About panel / app behavior
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: macos_version
+    attributes:
+      label: macOS version
+      placeholder: "e.g. macOS 15.3"
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_behavior
+    attributes:
+      label: Current behavior
+      description: What does the app do today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected behavior
+      description: What should it do instead to better match native macOS behavior?
+    validations:
+      required: true
+
+  - type: textarea
+    id: hig_reference
+    attributes:
+      label: HIG reference (optional)
+      description: Link the relevant Apple HIG page, or briefly describe which macOS system behavior it should match.
+      placeholder: "e.g. Apple HIG Menus / SF Symbols, or \"match Wi-Fi/Bluetooth menu behavior\""
+
+  - type: textarea
+    id: screenshots_or_examples
+    attributes:
+      label: Screenshots or examples (optional)
+      description: Add screenshots, recordings, or comparisons to system menu bar extras (Wi-Fi, Battery, Bluetooth, etc.).
+
+  - type: checkboxes
+    id: pre_submit_checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I checked existing UI/HIG issues for duplicates.
+          required: true
+        - label: I included enough detail to reproduce or evaluate the UX issue.
+          required: true

@@ -1,0 +1,9 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Documentation and Installation Guide
+    url: https://github.com/adamabernathy/default-browser/wiki/Installation
+    about: Start here for install, uninstall, and launch help.
+  - name: Browser Switch Wiki
+    url: https://github.com/adamabernathy/default-browser/wiki
+    about: Review feature, settings, network/VPN, and architecture docs before filing a question.
+

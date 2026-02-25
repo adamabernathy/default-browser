@@ -1,58 +1,50 @@
----
-name: Pull Request
-about: Standard pull request template
-title: ''
-labels: ''
-assignees: ''
----
+## Summary
 
-## Description
-<!-- Describe your changes in detail -->
+Describe the change and why it matters.
 
-## Type of Change
-<!-- Check the box that applies (put an 'x' in the brackets: [x]) -->
+## Related Issue
 
-- [ ] 🐛 **Bug fix** (patch - fixes an issue)
-- [ ] ✨ **New feature** (minor - adds functionality)
-- [ ] 💥 **Breaking change** (major - changes that break backward compatibility)
-- [ ] 📚 **Documentation** (no version bump)
-- [ ] 🎨 **Code style** (formatting, no functional changes)
-- [ ] ♻️ **Refactoring** (no functional changes)
-- [ ] ⚡ **Performance** (patch - improves performance)
-- [ ] ✅ **Tests** (no version bump)
-- [ ] 🔧 **Chore** (no version bump)
+- Closes #
 
-## Version Bump
-<!-- This will be automatically determined by the type above, but you can override: -->
-<!-- [patch] = 0.9.0 → 0.9.1 (bug fixes, performance improvements) -->
-<!-- [minor] = 0.9.0 → 0.10.0 (new features) -->
-<!-- [major] = 0.9.0 → 1.0.0 (breaking changes) -->
-
-**Suggested bump:** <!-- Will be determined by type of change above -->
-
-## Changes Made
-<!-- List the specific changes -->
+## What Changed
 
 - 
 - 
 - 
 
 ## Testing
-<!-- Describe how you tested these changes -->
 
-- [ ] Tested locally
-- [ ] Built successfully
-- [ ] Verified in About dialog
+Describe what you ran and what you verified.
 
-## Screenshots (if applicable)
-<!-- Add screenshots to show UI changes -->
+```bash
+swift build
+swift test
+```
 
-## Checklist
-- [ ] My code follows the project's style guidelines
-- [ ] I have tested my changes locally
-- [ ] I have updated documentation (if needed)
-- [ ] My changes generate no new warnings
-- [ ] I have selected the correct type of change above
+- [ ] `swift build` passes with no new warnings
+- [ ] `swift test` passes
+- [ ] Verified behavior locally
 
-## Additional Notes
-<!-- Any additional information or context -->
+## UI Changes (if applicable)
+
+- [ ] No UI changes
+- [ ] UI changes included screenshots or recordings
+- [ ] UI changes were reviewed against the macOS HIG expectations in `CLAUDE.md`
+
+## Documentation (if applicable)
+
+- [ ] No docs updates needed
+- [ ] Updated `README.md`
+- [ ] Updated `wiki/`
+- [ ] Updated inline comments/docs
+
+## Contributor Checklist
+
+- [ ] Branch follows `Issue-N` naming (when working from a GitHub issue)
+- [ ] Commit messages include `Closes #N` where required by `CLAUDE.md`
+- [ ] Changes are scoped to this PR and unrelated edits are excluded
+- [ ] Added or updated tests for behavior changes
+
+## Notes for Reviewers
+
+Anything reviewers should pay special attention to (edge cases, risks, follow-ups).
