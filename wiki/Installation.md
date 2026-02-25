@@ -12,7 +12,7 @@ If you only have the Command Line Tools (not the full Xcode app), the build will
 Copy and paste this into Terminal:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/adamabernathy/browser-selector/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/adamabernathy/default-browser/main/scripts/install.sh | bash
 ```
 
 This clones the repo to a temp directory, compiles a release build, assembles the `.app` bundle, copies it to `~/Applications/Browser Switch.app`, and deletes the clone automatically. The script also works from a local checkout (`./scripts/install.sh`), in which case it skips the clone and builds from the working tree.
@@ -21,7 +21,7 @@ The app installs to `~/Applications` (per-user), not `/Applications` (system-wid
 
 ## Install from GitHub Releases
 
-Every push to `main` publishes a signed and notarized build to the `current` release on GitHub. Tagged pushes (`v*`) create versioned releases. Download `BrowserSwitch-macOS.zip` from the [Releases page](https://github.com/adamabernathy/browser-selector/releases), unzip it, and drag `Browser Switch.app` to your Applications folder.
+Every push to `main` publishes a signed and notarized build to the `current` release on GitHub. Tagged pushes (`v*`) create versioned releases. Download `BrowserSwitch-macOS.zip` from the [Releases page](https://github.com/adamabernathy/default-browser/releases), unzip it, and drag `Browser Switch.app` to your Applications folder.
 
 ## Uninstall
 

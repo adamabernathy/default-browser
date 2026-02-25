@@ -1,97 +1,109 @@
 # Browser Switch (macOS Menu Bar App)
 
-Browser Switch is a lightweight macOS menu bar utility that makes changing your default browser a one-click action.
+[![Build](https://github.com/adamabernathy/default-browser/actions/workflows/ci.yml/badge.svg)](https://github.com/adamabernathy/default-browser/actions/workflows/ci.yml)
 
-If you regularly jump between Chrome, Safari, Arc, Firefox, or Edge for different tasks, Browser Switch removes the trip to System Settings and keeps your day moving along.
+Browser Switch is a macOS menu bar app that changes your default browser in one click.
 
-## Screenshot
+If you bounce between Safari, Chrome, Firefox, Arc, Edge, or a test browser during the day, Browser Switch keeps that switch in the menu bar instead of sending you into System Settings.
+
+> [!IMPORTANT]
+> Browser Switch targets macOS 14+ (Sonoma and newer).
+
+## Current Status ✅
+
+- Active macOS menu bar app for daily use
+- Core browser switching is working (`http` and `https`)
+- Built as a native AppKit app (no SwiftUI)
+- CI, tests, and release packaging workflows are in the repo
+- Target platform: macOS 14+
+
+## Screenshot 📸
 
 ![Browser Switch menu screenshot](docs/images/screenshot-1.png)
 
-## Why It’s Useful
+## Why Use It 🚀
 
-- Save time: switch default browser instantly from the menu bar
-- Stay focused: no System Settings navigation every time
-- Work your way: quickly move between work, personal, and testing browser contexts
-- Built for daily use: minimal UI, fast launch, no Dock clutter in normal use
+- Switch browsers quickly without leaving your workflow
+- Keep work/personal/testing browser contexts easy to manage
+- Stay in the menu bar with minimal UI and no Dock icon during normal use
+- See the current default browser at a glance
 
-## Features
+## Key Features ✨
 
-- Menu bar app with no Dock presence during normal use
-- Switch default browser for `http` and `https`
-- Shows installed browsers dynamically (Safari/Chrome pinned first)
-- Checkmark indicates the browser currently set by macOS
-- De-duplicates duplicate browser entries by display name
-- Internet context section in the menu:
-  - VPN status from system network state (supports OpenConnect `utun` routes)
-  - Green check icon when VPN is connected
-  - ISP and location from `https://wtfismyip.com/json`
-  - IP and Tor-exit values hidden unless the `Option` key is held
-  - Network-change triggered refresh, throttled to at most once per minute
-- About panel with app identity and copyright
-- Settings menu:
-  - Run on Startup
-  - Scan for New Browsers
-- Quit action from menu
+- One-click default browser switching from the menu bar
+- Dynamic browser discovery (with Safari and Chrome prioritized)
+- Checkmark on the browser currently selected by macOS
+- Optional network and VPN context shown in the menu
+- Caffeine mode to keep the display awake while you work
+- Hide/show desktop icons for screen sharing and presenting
+- Quick Stage Manager toggle from the menu
+- Run on Startup toggle
+- About panel and standard quit behavior
 
-## Install
+## Getting Started 🛠️
 
-Copy and paste this into Terminal:
+### Install from Source (One-Liner)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/adamabernathy/browser-selector/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/adamabernathy/default-browser/main/scripts/install.sh | bash
 ```
 
-This clones the repo to a temp directory, compiles a release build, copies the app to `~/Applications`, and cleans up after itself. Requires macOS 12+ and Xcode (or Command Line Tools with Swift 5.9+).
+This builds a release app and installs `Browser Switch.app` into `~/Applications`.
 
-To uninstall:
+> [!NOTE]
+> This is a menu bar app. It runs without a Dock icon during normal use, so look for the app's icon in the macOS menu bar after launch.
 
-```bash
-rm -rf ~/Applications/Browser\ Switch.app
-```
+### Run from a Local Checkout
 
-## Development
+#### Requirements (Source Build)
 
-### Requirements
+- macOS 14 (Sonoma) or later
+- Xcode or Xcode Command Line Tools (Swift toolchain)
 
-- macOS 12+
-- Xcode or Apple Swift toolchain (Swift 5.9+)
-
-### Build and run from Xcode
-
-1. `File > Open...` and select this folder.
-2. Select the `BrowserSwitchMenuBarApp` scheme.
-3. Build and run.
-
-### Build and run from Terminal
-
-Useful for development logs and debugging. The process is attached to your terminal session:
+#### Local Test Build
 
 ```bash
 swift build
 swift run
 ```
 
-### Build a standalone .app bundle
+#### Build a Standalone `.app`
 
 ```bash
 ./scripts/build-app.sh --release --run
 ```
 
-This creates `dist/Browser Switch.app` and opens it. You can also double-click the app from Finder.
+## Tips 💡
 
-### Run tests
+- Hold the `Option` key while the menu is open to reveal power tools and additional network details.
+- Use Caffeine mode before demos or long screen shares to help prevent the display from sleeping.
+- Hide desktop icons before presenting to reduce visual clutter and avoid exposing files on your desktop.
+- Toggle Stage Manager from the same menu when you want a cleaner presenting layout.
+- Keep Browser Switch in `~/Applications` if you want a per-user install with no `sudo`.
+- If you enable Run on Startup, verify it in System Settings > General > Login Items.
+
+> [!TIP]
+> If you regularly present or screen share, open the menu with `Option` held to quickly access desktop icon visibility and Stage Manager controls.
+
+### Uninstall
 
 ```bash
-swift test
+rm -rf ~/Applications/Browser\ Switch.app
 ```
 
-## CI and Packaging
+## Documentation 📚
 
-GitHub Actions workflows are included:
+For technical details, architecture, CI, and implementation notes, use the wiki pages in `wiki/`:
 
-- `CI`: runs tests and release build on pushes/PRs
-- `Package macOS App`: builds a downloadable `.app` zip artifact and publishes it on version tags (`v*`)
+- [Wiki Home](wiki/Home.md)
+- [Installation](wiki/Installation.md)
+- [Menu Bar Interface](wiki/Menu-Bar-Interface.md)
+- [Option-Key Power Tools](wiki/Option-Key-Power-Tools.md)
+- [Network and VPN Context](wiki/Network-and-VPN-Context.md)
+- [Browser Discovery](wiki/Browser-Discovery.md)
+- [Settings](wiki/Settings.md)
+- [Architecture](wiki/Architecture.md)
+- [CI and Releases](wiki/CI-and-Releases.md)
 
 ## License
 

@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 # Browser Switch – install from source
-# https://github.com/adamabernathy/browser-selector
+# https://github.com/adamabernathy/default-browser
 #
 # One-liner install (copy and paste into Terminal):
 #
-#   curl -fsSL https://raw.githubusercontent.com/adamabernathy/browser-selector/main/scripts/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/adamabernathy/default-browser/main/scripts/install.sh | bash
 #
 # Requirements: Xcode or Xcode Command Line Tools with Swift 5.9+
 
 set -euo pipefail
 
-REPO_URL="https://github.com/adamabernathy/browser-selector"
+REPO_URL="https://github.com/adamabernathy/default-browser"
 APP_NAME="Browser Switch"
 INSTALL_DIR="${HOME}/Applications"
 
